@@ -10,7 +10,10 @@ import Header from './components/header/Header';
 function App() {
   return (
     <Router>
-      <Box>
+      <Box
+        bg='gray.50'
+        minH='100vh'
+      >
         <Header />
 
         <Switch>
@@ -21,7 +24,7 @@ function App() {
             <Detail />
           </Route>
         </Switch>
-        
+
       </Box>
     </Router>
   );
