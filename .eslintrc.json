@@ -24,7 +24,8 @@
     "rules": {
         "quotes": [
             "error",
-            "single"
+            "single",
+            { "allowTemplateLiterals": true }
         ],
         "jsx-quotes": [
             "error",
