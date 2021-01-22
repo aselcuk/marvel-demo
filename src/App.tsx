@@ -1,35 +1,28 @@
-import { Home, Detail } from "./pages";
+import { Home, Detail } from './pages';
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link
-} from "react-router-dom";
+  Route
+} from 'react-router-dom';
+import { Box } from '@chakra-ui/react';
+import Header from './components/header/Header';
 
 function App() {
   return (
     <Router>
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/detail">Detail</Link>
-            </li>
-          </ul>
-        </nav>
+      <Box>
+        <Header />
 
         <Switch>
-          <Route exact path="/">
+          <Route exact path='/'>
             <Home />
           </Route>
-          <Route path="/detail">
+          <Route path='/detail'>
             <Detail />
           </Route>
         </Switch>
-      </div>
+        
+      </Box>
     </Router>
   );
 }

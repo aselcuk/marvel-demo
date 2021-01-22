@@ -3,5 +3,5 @@ export default function Detail() {
         <div>
             detail
         </div>
-    )
+    );
 }
