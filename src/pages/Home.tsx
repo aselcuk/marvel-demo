@@ -5,7 +5,7 @@ import marvelService from 'src/service/marvel-service';
 
 export default function Home() {
 
-    const [characters, setCharacters] = useState<any>([]);
+    const [characters, setCharacters] = useState([]);
 
     useEffect(() => {
         getCharacters();
