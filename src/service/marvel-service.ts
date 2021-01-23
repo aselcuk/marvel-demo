@@ -1,5 +1,6 @@
 import md5 from 'md5';
 import { Character } from 'src/models/Character';
+import { CharacterList } from 'src/models/CharacterList';
 import { ComicBook } from 'src/models/ComicBook';
 import { sortDescByModifiedDate } from 'src/utils/utils';
 
@@ -20,12 +21,12 @@ const marvelService = (function () {
 
     const createInstance = () => {
 
-        const getCharacters = async (page): Promise<Character[]> => {
+        const getCharacters = async (page): Promise<CharacterList> => {
             try {
 
                 let charactersAPI = '';
 
-                if (page > 1) {
+                if (page > 0) {
                     charactersAPI = `${API_BASE}/characters?ts=${timestamp}&apikey=${MARVEL_PUBLIC_KEY}&hash=${hash}&offset=${page * API_CHARACTERS_LIMIT}&limit=${API_CHARACTERS_LIMIT}`;
                 } else {
                     charactersAPI = `${API_BASE}/characters?ts=${timestamp}&apikey=${MARVEL_PUBLIC_KEY}&hash=${hash}&limit=${API_CHARACTERS_LIMIT}`;
@@ -35,7 +36,12 @@ const marvelService = (function () {
                 const response = await fetch(charactersAPI);
                 const responseToJson = await response.json();
 
-                const result = responseToJson.data.results.map((item) => {
+                const result = new CharacterList({
+                    total: responseToJson.data.total,
+                    characters: new Array<Character>()
+                });
+
+                result.characters = responseToJson.data.results.map((item) => {
                     return new Character({
                         id: item.id,
                         name: item.name,
