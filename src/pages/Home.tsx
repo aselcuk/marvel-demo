@@ -1,6 +1,6 @@
-import { Avatar, Box, Grid, HStack, Text } from '@chakra-ui/react';
+import { Box, Grid, HStack, Skeleton, SkeletonCircle } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import CharacterListItem from 'src/components/list-item/CharacterListItem';
 import { Character } from 'src/models/Character';
 import marvelService from 'src/service/marvel-service';
 
@@ -26,14 +26,16 @@ export default function Home() {
             justifyContent='center'
         >
 
+
             <Grid templateColumns={['100%', 'repeat(2, 1fr)']} gap={8}>
                 {
-                    characters.map((character) => (
-                        <Link
-                            key={character.id}
-                            to={`/detail/${character.id}`}
-                        >
+                    characters.length > 0 ? characters.map((character) => (
+                        <CharacterListItem key={character.id} character={character} />
+                    )) :
+
+                        Array(16).fill(null, 0, 16).map((v, i) => (
                             <HStack
+                                key={i}
                                 boxShadow='md'
                                 py='2'
                                 px='4'
@@ -42,11 +44,10 @@ export default function Home() {
                                 spacing='12px'
                                 maxW='351px'
                             >
-                                <Avatar size='lg' name={character.name} src={character.thumbnail} />
-                                <Text fontSize='xl'>{character.name}</Text>
+                                <SkeletonCircle size='14' />
+                                <Skeleton h='20px' w='200px' ml='4' />
                             </HStack>
-                        </Link>
-                    ))
+                        ))
                 }
             </Grid>
         </Box>
