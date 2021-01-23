@@ -3,18 +3,18 @@ import { Character } from 'src/models/Character';
 import { CharacterList } from 'src/models/CharacterList';
 import { ComicBook } from 'src/models/ComicBook';
 import { sortDescByModifiedDate } from 'src/utils/utils';
+import {
+    API_BASE,
+    API_CHARACTERS_LIMIT,
+    API_CHARACTER_COMICS_LIMIT,
+    SLICE_COMICS_LIMIT,
+    MARVEL_PRIVATE_KEY,
+    MARVEL_PUBLIC_KEY,
+    timestamp
+} from 'src/service/constants';
 
 const marvelService = (function () {
     let instance;
-
-    const API_BASE = 'https://gateway.marvel.com/v1/public';
-    const API_CHARACTERS_LIMIT = 30;
-    const API_CHARACTER_COMICS_LIMIT = 100;
-    const COMICS_LIMIT = 10;
-
-    const timestamp = new Date().getTime();
-    const MARVEL_PRIVATE_KEY = process.env.REACT_APP_MARVEL_PRIVATE_KEY;
-    const MARVEL_PUBLIC_KEY = process.env.REACT_APP_MARVEL_PUBLIC_KEY;
 
     const hash = md5(timestamp + MARVEL_PRIVATE_KEY + MARVEL_PUBLIC_KEY);
 
@@ -99,7 +99,7 @@ const marvelService = (function () {
                     });
                 });
 
-                const sortedResult = sortDescByModifiedDate(result).slice(0, COMICS_LIMIT);
+                const sortedResult = sortDescByModifiedDate(result).slice(0, SLICE_COMICS_LIMIT);
 
                 return Promise.resolve(sortedResult);
             } catch (error) {

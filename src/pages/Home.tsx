@@ -47,9 +47,6 @@ export default function Home() {
         });
     };
 
-    // eslint-disable-next-line no-console
-    console.log(characterList);
-
     return (
         <Box
             p='30px'
