@@ -1,31 +1,60 @@
-import { Box, Grid, HStack, Skeleton, SkeletonCircle } from '@chakra-ui/react';
+import { Box, Center, Grid, Spinner, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import CharacterListItem from 'src/components/list-item/CharacterListItem';
+import { CharacterListItem, ListItemSkeletonLoader } from 'src/components';
 import { Character } from 'src/models/Character';
+import useBottom from 'src/hooks/useBottom';
 import marvelService from 'src/service/marvel-service';
 
 export default function Home() {
 
     const [characters, setCharacters] = useState<Character[]>([]);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [isError, setIsError] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const { isBottom, setIsBottom } = useBottom();
 
     useEffect(() => {
         getCharacters();
-    }, []);
+    }, [currentPage]);
 
-    const getCharacters = async () => {
-        const response = await marvelService.getCharacters();
+    useEffect(() => {
+        if (isBottom) {
+            setCurrentPage(prevState => prevState + 1);
+        }
+    }, [isBottom]);
 
-        setCharacters(response);
+    const getCharacters = () => {
+
+        setIsLoading(true);
+
+        marvelService.getCharacters(currentPage).then((response) => {
+
+            setCharacters([...characters, ...response]);
+            setIsBottom(false);
+            setIsLoading(false);
+
+        }).catch(() => {
+            setIsError(true);
+            setIsLoading(false);
+        });
     };
 
     return (
         <Box
             p='30px'
             display='flex'
+            flexDirection='column'
             alignItems='center'
             justifyContent='center'
+            mb='2'
         >
 
+            {
+                isError &&
+                <Center m='4' p='4' boxShadow='md' bg='white'>
+                    <Text fontSize='md'>There is no item to show</Text>
+                </Center>
+            }
 
             <Grid templateColumns={['100%', 'repeat(2, 1fr)']} gap={8}>
                 {
@@ -34,22 +63,14 @@ export default function Home() {
                     )) :
 
                         Array(16).fill(null, 0, 16).map((v, i) => (
-                            <HStack
-                                key={i}
-                                boxShadow='md'
-                                py='2'
-                                px='4'
-                                bg='white'
-                                rounded='md'
-                                spacing='12px'
-                                maxW='351px'
-                            >
-                                <SkeletonCircle size='14' />
-                                <Skeleton h='20px' w='200px' ml='4' />
-                            </HStack>
+                            <ListItemSkeletonLoader key={i} />
                         ))
                 }
             </Grid>
+
+            {
+                isLoading && characters.length > 0 && <Spinner color='red.500' mt='2' />
+            }
         </Box>
     );
 }

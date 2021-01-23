@@ -20,9 +20,17 @@ const marvelService = (function () {
 
     const createInstance = () => {
 
-        const getCharacters = async (): Promise<Character[]> => {
+        const getCharacters = async (page): Promise<Character[]> => {
             try {
-                const charactersAPI = `${API_BASE}/characters?ts=${timestamp}&apikey=${MARVEL_PUBLIC_KEY}&hash=${hash}&limit=${API_CHARACTERS_LIMIT}`;
+
+                let charactersAPI = '';
+
+                if (page > 1) {
+                    charactersAPI = `${API_BASE}/characters?ts=${timestamp}&apikey=${MARVEL_PUBLIC_KEY}&hash=${hash}&offset=${page * API_CHARACTERS_LIMIT}&limit=${API_CHARACTERS_LIMIT}`;
+                } else {
+                    charactersAPI = `${API_BASE}/characters?ts=${timestamp}&apikey=${MARVEL_PUBLIC_KEY}&hash=${hash}&limit=${API_CHARACTERS_LIMIT}`;
+                }
+
 
                 const response = await fetch(charactersAPI);
                 const responseToJson = await response.json();
