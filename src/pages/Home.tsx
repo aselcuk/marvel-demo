@@ -1,11 +1,12 @@
 import { Avatar, Box, Grid, HStack, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Character } from 'src/models/Character';
 import marvelService from 'src/service/marvel-service';
 
 export default function Home() {
 
-    const [characters, setCharacters] = useState([]);
+    const [characters, setCharacters] = useState<Character[]>([]);
 
     useEffect(() => {
         getCharacters();
@@ -14,7 +15,7 @@ export default function Home() {
     const getCharacters = async () => {
         const response = await marvelService.getCharacters();
 
-        setCharacters(response.data.results);
+        setCharacters(response);
     };
 
     return (
@@ -39,8 +40,9 @@ export default function Home() {
                                 bg='white'
                                 rounded='md'
                                 spacing='12px'
+                                maxW='351px'
                             >
-                                <Avatar size='lg' name={character.name} src={character.thumbnail.path + '.' + character.thumbnail.extension} />
+                                <Avatar size='lg' name={character.name} src={character.thumbnail} />
                                 <Text fontSize='xl'>{character.name}</Text>
                             </HStack>
                         </Link>
