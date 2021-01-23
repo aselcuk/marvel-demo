@@ -4,32 +4,40 @@ import { CharacterListItem, ListItemSkeletonLoader } from 'src/components';
 import { Character } from 'src/models/Character';
 import useBottom from 'src/hooks/useBottom';
 import marvelService from 'src/service/marvel-service';
+import { CharacterList } from 'src/models/CharacterList';
 
 export default function Home() {
 
-    const [characters, setCharacters] = useState<Character[]>([]);
-    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [characterList, setCharacterList] = useState<CharacterList>({ total: 0, characters: [] });
+    const [currentPage, setCurrentPage] = useState<number>(0);
     const [isError, setIsError] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const { isBottom, setIsBottom } = useBottom();
 
     useEffect(() => {
         getCharacters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage]);
 
     useEffect(() => {
-        if (isBottom) {
+        if (isBottom && characterList.total !== characterList.characters.length) {
+            setIsLoading(true);
             setCurrentPage(prevState => prevState + 1);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isBottom]);
 
     const getCharacters = () => {
 
-        setIsLoading(true);
+        marvelService.getCharacters(currentPage).then((response: CharacterList) => {
 
-        marvelService.getCharacters(currentPage).then((response) => {
+            const characters = [...characterList.characters, ...response.characters];
+            const characterListItem = new CharacterList({
+                total: response.total,
+                characters: characters
+            });
 
-            setCharacters([...characters, ...response]);
+            setCharacterList(characterListItem);
             setIsBottom(false);
             setIsLoading(false);
 
@@ -39,6 +47,9 @@ export default function Home() {
         });
     };
 
+    // eslint-disable-next-line no-console
+    console.log(characterList);
+
     return (
         <Box
             p='30px'
@@ -46,7 +57,6 @@ export default function Home() {
             flexDirection='column'
             alignItems='center'
             justifyContent='center'
-            mb='2'
         >
 
             {
@@ -58,7 +68,7 @@ export default function Home() {
 
             <Grid templateColumns={['100%', 'repeat(2, 1fr)']} gap={8}>
                 {
-                    characters.length > 0 ? characters.map((character) => (
+                    characterList.characters.length > 0 ? characterList.characters.map((character: Character) => (
                         <CharacterListItem key={character.id} character={character} />
                     )) :
 
@@ -69,7 +79,7 @@ export default function Home() {
             </Grid>
 
             {
-                isLoading && characters.length > 0 && <Spinner color='red.500' mt='2' />
+                isLoading && characterList.characters.length > 0 && <Spinner color='red.500' my='2' />
             }
         </Box>
     );
