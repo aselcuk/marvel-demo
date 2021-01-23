@@ -1,7 +1,7 @@
-import { Box, Text, Center, Stack, Skeleton, SkeletonCircle, SkeletonText, HStack, VStack, Divider } from '@chakra-ui/react';
+import { Box, Text, Center } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import CharacterDetailItem from 'src/components/detail-item/CharacterDetailItem';
+import { CharacterDetailItem, DetailItemSkeletonLoader } from 'src/components';
 import { Character } from 'src/models/Character';
 import marvelService from 'src/service/marvel-service';
 
@@ -39,16 +39,6 @@ export default function Detail() {
                 >
                     <CharacterDetailItem character={character} />
                 </Box> :
-                <Box display='flex' alignItems='center' justifyContent='center' p='4'>
-                    <Box padding='6' boxShadow='md' bg='white' maxW='500px' w='100%'>
-                        <VStack>
-                            <SkeletonCircle size='14' />
-                            <Skeleton h='20px' w='200px' />
-                        </VStack>
-                        <SkeletonText mt='4' noOfLines={1} spacing='4' />
-                        <Divider my='4' />
-                        <SkeletonText mt='4' noOfLines={4} spacing='4' />
-                    </Box>
-                </Box>
+                <DetailItemSkeletonLoader />
     );
 }
