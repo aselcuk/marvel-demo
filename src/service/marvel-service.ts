@@ -109,7 +109,8 @@ const marvelService = (function () {
 
         return {
             getCharacters,
-            getCharacterById
+            getCharacterById,
+            getComicsByCharacterId
         };
     };
 
