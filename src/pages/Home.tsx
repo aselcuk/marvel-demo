@@ -11,20 +11,20 @@ export default function Home() {
     const [characterList, setCharacterList] = useState<CharacterList>({ total: 0, characters: [] });
     const [currentPage, setCurrentPage] = useState<number>(0);
     const [isError, setIsError] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [showLoadMoreSpinner, setShowLoadMoreSpinner] = useState<boolean>(false);
     const { isBottom, setIsBottom } = useBottom();
 
     useEffect(() => {
         getCharacters();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage]);
 
     useEffect(() => {
         if (isBottom && characterList.total !== characterList.characters.length) {
-            setIsLoading(true);
+            setShowLoadMoreSpinner(true);
             setCurrentPage(prevState => prevState + 1);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isBottom]);
 
     const getCharacters = () => {
@@ -39,11 +39,11 @@ export default function Home() {
 
             setCharacterList(characterListItem);
             setIsBottom(false);
-            setIsLoading(false);
+            setShowLoadMoreSpinner(false);
 
         }).catch(() => {
             setIsError(true);
-            setIsLoading(false);
+            setShowLoadMoreSpinner(false);
         });
     };
 
@@ -57,26 +57,26 @@ export default function Home() {
         >
 
             {
-                isError &&
-                <Center m='4' p='4' boxShadow='md' bg='white'>
-                    <Text fontSize='md'>There is no item to show</Text>
-                </Center>
+                isError ?
+                    <Center m='4' p='4' boxShadow='md' bg='white'>
+                        <Text fontSize='md'>There is no item to show</Text>
+                    </Center> :
+                    <Grid templateColumns={['100%', 'repeat(2, 1fr)']} gap={8}>
+                        {
+                            characterList.characters.length > 0 ? characterList.characters.map((character: Character) => (
+                                <CharacterListItem key={character.id} character={character} />
+                            )) :
+
+                                Array(16).fill(null, 0, 16).map((v, i) => (
+                                    <ListItemSkeletonLoader key={i} />
+                                ))
+                        }
+                    </Grid>
+
             }
 
-            <Grid templateColumns={['100%', 'repeat(2, 1fr)']} gap={8}>
-                {
-                    characterList.characters.length > 0 ? characterList.characters.map((character: Character) => (
-                        <CharacterListItem key={character.id} character={character} />
-                    )) :
-
-                        Array(16).fill(null, 0, 16).map((v, i) => (
-                            <ListItemSkeletonLoader key={i} />
-                        ))
-                }
-            </Grid>
-
             {
-                isLoading && characterList.characters.length > 0 && <Spinner color='red.500' my='2' />
+                showLoadMoreSpinner && characterList.characters.length > 0 && <Spinner color='red.500' my='2' />
             }
         </Box>
     );
