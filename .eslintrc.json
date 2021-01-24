@@ -21,6 +21,7 @@
         "@typescript-eslint",
         "react-hooks"
     ],
+    "ignorePatterns": ["__tests__/*", "jest.config.js", "babel.config.js"],
     "rules": {
         "quotes": [
             "error",
